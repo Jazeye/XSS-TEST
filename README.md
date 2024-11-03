@@ -25,7 +25,7 @@ This page reflects user input directly in the HTML, showcasing how a malicious u
 To test for reflective XSS, use the following command in your browser's address bar:
 
 ```
-http://yourdomain/reflective.html?input=<script>alert('Reflective XSS');</script>
+<script>alert('Reflective XSS');</script>
 ```
 
 ### 3. Stored XSS Test (`stored.html`)
@@ -53,7 +53,7 @@ This page allows users to search for shoe products and demonstrates DOM-based XS
 To test for DOM-based XSS, use the following command in your browser's address bar:
 
 ```
-http://yourdomain/dom.html?query=alert('DOM-based XSS');
+alert('DOM-based XSS');
 ```
 
 ## General Testing Steps
