@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reflective XSS Test</title>
+  <style>
+    body { background-color: #ffebcd; color: #333; font-family: Arial, sans-serif; text-align: center; }
+    h1 { color: #dc143c; }
+  </style>
+</head>
+<body>
+  <h1>Reflective XSS Test</h1>
+  <form action="" method="GET">
+    <label for="input">Enter some text:</label>
+    <input type="text" id="input" name="input">
+    <button type="submit">Submit</button>
+  </form>
+  
+  <div>
+    <p>Echoed input:</p>
+    <p style="color: #4682b4;">
+      <!-- Display user input directly in HTML (Reflective XSS risk) -->
+      <script>
+        const params = new URLSearchParams(window.location.search);
+        const userInput = params.get('input');
+        if (userInput) {
+          document.write(userInput); // Reflective XSS injection point
+        }
+      </script>
+    </p>
+  </div>
+  
+  <a href="index.html">Back to Home</a>
+</body>
+</html>

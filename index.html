@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XSS Testing Home</title>
+  <style>
+    body { background-color: #f0f8ff; color: #333; font-family: Arial, sans-serif; text-align: center; }
+    h1 { color: #ff6347; }
+    nav a { margin: 0 15px; color: #4682b4; font-size: 1.2em; }
+    nav a:hover { color: #ff4500; }
+    button { background-color: #ff6347; color: #fff; border: none; padding: 10px 20px; cursor: pointer; margin-top: 20px; }
+    button:hover { background-color: #ff4500; }
+  </style>
+</head>
+<body>
+  <h1>XSS Testing Lab</h1>
+  <p>Welcome to the XSS Testing Lab! Select a page to test different types of XSS.</p>
+  <nav>
+    <a href="./reflective.html">Reflective XSS</a>
+    <a href="./stored.html">Stored XSS</a>
+    <a href="./dom.html">DOM-based XSS</a>
+  </nav>
+  
+  <!-- Button to clear stored scripts -->
+  <button id="clearStoredScripts">Clear All Stored Scripts</button>
+
+  <script>
+    // Function to clear all messages from localStorage
+    document.getElementById('clearStoredScripts').addEventListener('click', function() {
+      localStorage.removeItem('messages');
+      alert('All stored messages have been cleared.');
+    });
+  </script>
+</body>
+</html>

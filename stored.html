@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stored XSS Test with Local Storage</title>
+  <style>
+    body { background-color: #e6e6fa; color: #333; font-family: Arial, sans-serif; text-align: center; }
+    h1 { color: #9370db; }
+    .messages { color: #8b0000; margin: 20px 0; }
+    button { background-color: #ff6347; color: #fff; border: none; padding: 10px 20px; cursor: pointer; }
+    button:hover { background-color: #ff4500; }
+  </style>
+</head>
+<body>
+  <h1>Stored XSS Test with Local Storage</h1>
+  
+  <!-- Input Form for Messages -->
+  <form id="messageForm">
+    <label for="message">Enter a message:</label>
+    <input type="text" id="message" name="message" required>
+    <button type="submit">Submit</button>
+  </form>
+
+  <!-- Messages Display -->
+  <h2>Messages:</h2>
+  <div id="messages" class="messages"></div>
+  
+  <!-- Clear Messages Button -->
+  <button id="clearButton">Clear All Messages</button>
+
+  <script>
+    // Function to load messages from localStorage
+    function loadMessages() {
+      const messagesDiv = document.getElementById('messages');
+      messagesDiv.innerHTML = ''; // Clear previous messages
+      const messages = JSON.parse(localStorage.getItem('messages')) || [];
+      
+      // Display each message
+      messages.forEach(msg => {
+        // Create a new element for the message
+        const messageElement = document.createElement('p');
+        messageElement.innerHTML = msg; // Allow potential XSS
+        
+        // Append message to the display
+        messagesDiv.appendChild(messageElement);
+        
+        // Check if the message contains a script and run it
+        const scriptMatch = /<script>(.*?)<\/script>/i.exec(msg);
+        if (scriptMatch) {
+          // Execute the script content directly
+          eval(scriptMatch[1]); // Only run if there's a script
+        }
+      });
+    }
+
+    // Function to save a new message
+    document.getElementById('messageForm').addEventListener('submit', function(event) {
+      event.preventDefault();
+      const message = document.getElementById('message').value;
+
+      // Save the new message to localStorage
+      let messages = JSON.parse(localStorage.getItem('messages')) || [];
+      messages.push(message);
+      localStorage.setItem('messages', JSON.stringify(messages));
+      
+      // Reload messages
+      loadMessages();
+      
+      // Clear the input form
+      document.getElementById('messageForm').reset();
+    });
+
+    // Function to clear all messages
+    document.getElementById('clearButton').addEventListener('click', function() {
+      localStorage.removeItem('messages');
+      loadMessages();
+    });
+
+    // Load messages on page load
+    loadMessages();
+  </script>
+
+  <a href="index.html">Back to Home</a>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shoe Product Page - DOM-based XSS Test</title>
+    <style>
+        body { background-color: #f8f9fa; color: #333; font-family: Arial, sans-serif; text-align: center; }
+        h1 { color: #007bff; }
+        .product { margin: 20px; padding: 15px; border: 1px solid #ccc; border-radius: 8px; background-color: #fff; }
+        #searchInput { padding: 10px; width: 200px; }
+        #searchButton { padding: 10px 20px; }
+    </style>
+</head>
+<body>
+    <h1>Welcome to the Shoe Store!</h1>
+    <p>Search for your favorite shoes:</p>
+
+    <div class="product">
+        <h2>Available Shoe Brands</h2>
+        <p>Enter your search term below (e.g., Nike, Adidas, etc.).</p>
+        <input type="text" id="searchInput" placeholder="Type your search term">
+        <button id="searchButton">Search</button>
+    </div>
+
+    <div id="result" class="product"></div>
+
+    <script>
+        // Available products with at least 6 items for each brand
+        const availableProducts = [
+            "Nike Air Max 270",
+            "Nike Air Max 90",
+            "Nike Air Force 1",
+            "Nike React Infinity Run",
+            "Nike Air Vapormax",
+            "Nike Zoom Pegasus Turbo",
+            "Adidas Ultraboost 21",
+            "Adidas NMD R1",
+            "Adidas Yeezy Boost 350",
+            "Adidas Superstar",
+            "Adidas Gazelle",
+            "Adidas Stan Smith",
+            "Puma RS-X",
+            "Puma Suede Classic",
+            "Puma Future Rider",
+            "Puma Cali",
+            "Puma X-Ray",
+            "Puma Thunder Spectra",
+            "Reebok Classic Leather",
+            "Reebok Nano X1",
+            "Reebok Club C 85",
+            "Reebok Zig Kinetica",
+            "Reebok Freestyle Hi",
+            "Reebok Question Mid",
+            "New Balance 990v5",
+            "New Balance Fresh Foam 1080v11",
+            "New Balance 574",
+            "New Balance 860v11",
+            "New Balance 997H",
+            "New Balance 550",
+            "Asics Gel-Kayano 27",
+            "Asics Gel-Nimbus 23",
+            "Asics Gel-Excite 8",
+            "Asics GT-2000 9",
+            "Asics Gel-Cumulus 23",
+            "Asics Onitsuka Tiger Mexico 66",
+            "Vans Old Skool",
+            "Vans Authentic",
+            "Vans Slip-On",
+            "Vans Sk8-Hi",
+            "Vans Era",
+            "Vans Ward",
+            "Converse Chuck Taylor All Star",
+            "Converse One Star",
+            "Converse Jack Purcell",
+            "Converse All Star Pro",
+            "Converse Fastbreak",
+            "Converse Run Star Hike"
+        ];
+
+        // Function to display search results
+        function displaySearchResults(query) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<h2>Search Results for: ${query}</h2>`;
+
+            // Check if the query is a command
+            if (query.includes("alert(") || query.includes("console.log(")) {
+                // Execute the injected code directly
+                try {
+                    eval(query); // Be cautious: eval can be dangerous!
+                } catch (e) {
+                    console.error("Error executing injected command:", e);
+                }
+            }
+
+            // Filter products based on the search query
+            const filteredProducts = availableProducts.filter(product => product.toLowerCase().includes(query.toLowerCase()));
+
+            if (filteredProducts.length > 0) {
+                resultDiv.innerHTML += "<ul>" + filteredProducts.map(product => `<li>${product}</li>`).join('') + "</ul>";
+            } else {
+                resultDiv.innerHTML += "<p>No results found.</p>";
+            }
+        }
+
+        // Event listener for the search button
+        document.getElementById('searchButton').addEventListener('click', function() {
+            const query = document.getElementById('searchInput').value;
+            // Update the URL without reloading the page
+            history.pushState(null, '', `?query=${encodeURIComponent(query)}`);
+            displaySearchResults(query);
+        });
+
+        // If there is a query in the URL, display results on page load
+        const params = new URLSearchParams(window.location.search);
+        const searchQuery = params.get("query");
+        if (searchQuery) {
+            displaySearchResults(searchQuery);
+        }
+    </script>
+
+    <a href="index.html">Back to Home</a>
+</body>
+</html>
